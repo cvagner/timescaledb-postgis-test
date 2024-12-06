@@ -1,0 +1,32 @@
+name: timescaledb-postgis-test
+
+services:
+  db:
+    image: timescale/timescaledb-ha:pg17
+    environment:
+      # PGDATA: /var/lib/postgresql/data
+      POSTGRES_USER: vessel
+      POSTGRES_PASSWORD: vessel
+      POSTGRES_DB: vessel
+      TZ: "Europe/Paris"
+    volumes:
+    #   - db-data:/var/lib/postgresql/data
+      - ./sql-data/vessel-schema.sql:/docker-entrypoint-initdb.d/init1.sql:ro
+      - ./sql-data/vessel-data.sql:/docker-entrypoint-initdb.d/init2.sql:ro
+      #
+      - ./sql-data:/sql-data:ro
+    ports:
+      - "5432:5432"
+    logging:
+      options:
+        max-size: "10k"
+        max-file: "20"
+    networks:
+      - vessel
+
+# volumes:
+#   db-data:
+
+networks:
+  vessel:
+    name: 'vessel'
